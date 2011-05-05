@@ -1,0 +1,7 @@
+--hide-void-return 
+-m markdown
+-M rdiscount
+--title "Shift - State and logic-less compiler and compressor interface"
+lib/**/*.rb
+--no-private
+--main README.md
