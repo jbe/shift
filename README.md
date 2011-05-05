@@ -6,7 +6,7 @@ Shift (draft)
 
 ---
 
-Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for compilers, compressors and so on.
+Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for stuff that compiles in one step, without state or template logic.
 
 ### Sample
 
@@ -15,6 +15,10 @@ Shift is a generic Ruby interface to different compilers, compressors, transform
   # coming very soon
 
 ```
+
+### Available mappings
+
+Coming too.
 
 [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
 
