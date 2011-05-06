@@ -8,12 +8,12 @@ Shift (draft)
 
 Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for stuff that compiles in one step, without stateful template logic.
 
-* [Docs](http://rubydoc.info/github/jbe/shift/master/frames)
-* [Available Shift components and their mappings.](http://rubydoc.info/github/jbe/shift/master/Shift).
+* [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
+* [Available Shift components and their mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
 
 ### Usage
 
-To read and process a file, using the best available default component for that filetype:
+To read and process a file, using the preferred available default component for that filetype:
 
 ```ruby
 
@@ -38,7 +38,8 @@ The components can also be used directly:
 
   cc = Shift::ClosureCompiler.new(:compilation_level => 'ADVANCED_OPTIMIZATIONS')
 
-  cc.read(path) # => processed contents
+  minified_js_string  = cc.read(path)
+  
   cc.readwrite('pickle.md' => 'pickle.html')
 
   md = Shift::RDiscount.new
@@ -51,7 +52,7 @@ To see if a component is available:
 
 ```ruby
 
-  Shift::YUICompressor.available? # => true if the yui gem is there and okay.
+  Shift::YUICompressor.available?.
 
 ```
 
@@ -71,13 +72,13 @@ You can also do:
 
 ```
 
-### Why not just use or extend Tilt for one step compilation/rendering as well?
+### Why am I not just using or extending Tilt?
 
 I am making a separate library for this rather than extending Tilt, because i would usually only need one of the two in a given context. One and two step compilation are somewhat different things. Shift is more on the build side. Tilt is more on the dynamic side.
 
 ### Bye
 
-Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more. Contributions and feedback is welcome, of course.
+Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more. And once again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift). Contributions and feedback is welcome, of course.
 
 ---
 
