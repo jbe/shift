@@ -12,12 +12,20 @@ module Shift
   VERSION = '0.0.1'
 
   require 'shift/errors'
-
-  require 'shift/identity'
-
   require 'shift/mappings'
 
-  # Read and process a file with the mapped handler
+
+  # components
+
+  autoload :Identity,         'shift/c/identity'
+  autoload :UglifyJS,         'shift/c/uglify_js'
+  autoload :ClosureCompiler,  'shift/c/closure_compiler'
+  autoload :YUICompressor,    'shift/c/yui_compressor'
+  autoload :CoffeeScript,     'shift/c/coffee_script'
+  autoload :Sass,             'shift/c/sass'
+
+
+  # Read and process a file with the mapped component.
   #
   # @see Shift.[]
   #
@@ -43,26 +51,20 @@ module Shift
   # Get the preferred available class mapped to match the
   # given filename or extension.
   #
-  # @raise [UnknownFormatError] when none of the mapped
-  #   implementations are available.
+  # @raise [UnknownFormatError] when none of the mappings match.
   #
-  # @return [Class] The preferred available class associated
-  #   with the file or extension, or nil when no mapping matches.
+  # (see Shift.best_available_mapping_for)
   #
   def self.[](file, opts={})
     pattern = file.to_s.downcase
     until pattern.empty?
       if MAPPINGS[pattern]
-        return best_available(MAPPINGS[pattern]).new(opts)
+        return best_available_mapping_for(pattern).new(opts)
       end
       pattern = File.basename(pattern)
       pattern.sub!(/^[^.]*\.?/, '')
     end
     raise UnknownFormatError, "no mapping matches #{file}"
-  end
-
-  def self.best_available(cls_ary)
-    # TODO
   end
 
 end

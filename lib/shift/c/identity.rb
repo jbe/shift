@@ -7,6 +7,10 @@ module Shift
   #
   class Identity
 
+    # One-liner on what the user must have/do to make it available.
+    # Used in DependencyError.
+    INSTRUCTIONS = 'Google it :)'
+
     # Wether the requirements are met in the current environment.
     # Typically checks if the required gems and/or command line
     # stuff is available.
