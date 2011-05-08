@@ -1,0 +1,5 @@
+
+
+piglet = -> 'grunt grunt'
+
+piglet()

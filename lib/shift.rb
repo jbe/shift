@@ -32,20 +32,7 @@ module Shift
   # (see Identity#read)
   #
   def self.read(path, opts={})
-    self[path].new(opts).read
-  end
-
-  # Read and process a file with the mapped handler, then
-  # write it somewhere.
-  #
-  # @see Shift.[]
-  #
-  # (see Identity#readwrite)
-  #
-  def self.readwrite(hsh)
-    hsh.each do |from, to|
-      self[from].default.readwrite(from => to)
-    end
+    self[path].new(opts).read(path)
   end
 
   # Get the preferred available class mapped to match the
@@ -55,11 +42,11 @@ module Shift
   #
   # (see Shift.best_available_mapping_for)
   #
-  def self.[](file, opts={})
+  def self.[](file)
     pattern = file.to_s.downcase
     until pattern.empty?
       if MAPPINGS[pattern]
-        return best_available_mapping_for(pattern).new(opts)
+        return best_available_mapping_for(pattern)
       end
       pattern = File.basename(pattern)
       pattern.sub!(/^[^.]*\.?/, '')

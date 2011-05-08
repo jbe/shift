@@ -11,6 +11,11 @@ Shift is a generic Ruby interface to different compilers, compressors, transform
 * [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
 * [Available Shift components and their mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
 
+### Installation
+
+  gem install tilt
+
+
 ### Usage
 
 To read and process a file, using the preferred available default component for that filetype:
@@ -25,10 +30,7 @@ Or to read, process, and then write:
 
 ```ruby
 
-  Shift.readwrite(
-    'canopy.sass' => 'canopy.css',
-    'flower.js'   => 'flower.min.js'
-    )
+  Shift.read('canopy.sass').write('canopy.css')
 
 ```
 
@@ -37,18 +39,20 @@ The components can also be used directly:
 ```ruby
 
   cc = Shift::ClosureCompiler.new(:compilation_level => 'ADVANCED_OPTIMIZATIONS')
-
   minified_js_string  = cc.read(path)
-  
-  cc.readwrite('pickle.md' => 'pickle.html')
-
-  md = Shift::RDiscount.new
-
-  md.process("hello *there*") # => "<p>hello <em>there</em></p>"
-  md.write("hello there" => 'message.html')
 
 ```
-To see if a component is available:
+
+To simply process a string, or to process and save a string:
+
+```ruby
+
+  md = Shift::RDiscount.new
+  md.process("hello *there*") # => "<p>hello <em>there</em></p>"
+  md.process("hello *there*").write('message.html')
+
+```
+To see if a component is available (check if the gem is installed and so on):
 
 ```ruby
 

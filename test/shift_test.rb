@@ -1,4 +1,8 @@
 require File.join(File.dirname(__FILE__), 'helper')
+require File.join(File.dirname(__FILE__), 'support')
+
+
+require 'tempfile'
 
 
 
@@ -7,19 +11,24 @@ require File.join(File.dirname(__FILE__), 'helper')
 # Test Shift base module methods
 class ShiftTest < TestCase
 
-  test 'raises UnknownFormatError when there is no mapping' do
-    assert_raises(UnknownFormatError) do
-      Shift.read('/ubongobaluba-hepp-oy-oy-oy.noformatforthis')
+
+
+  test 'read nonexistant file' do
+    assert_raises(Errno::ENOENT) do
+      Shift.read('/ubongobaluba-hepp-piglets/seriously.echo')
     end
   end
 
-  test 'raises error when reading nonexistant file' do
-  end
-
-  test 'reads and processes existing file' do
+  test 'read file' do
+    assert_match Shift.read(file 'letter.echo'),
+                 /electric power drill/
   end
 
   test 'reads existing file and writes result' do
+    with_tempfile do |tmp|
+      Shift.read(file('letter.echo')).write(tmp.path)
+      assert_equal(IO.read(file 'letter.echo'), IO.read(tmp.path))
+    end
   end
 
 
@@ -29,11 +38,14 @@ class ShiftTest < TestCase
     assert_kind_of Hash, Shift::MAPPINGS
   end
 
-  test 'returns nil when no mapping is available' do
+  test 'read unmapped file' do
+    assert_raises(Shift::UnknownFormatError) do
+      Shift.read('oy-oy-oy.noformatforthis')
+    end
   end
 
   test 'returns available mapping for a file type' do
-    assert_equal Shift[:js]
+    assert_equal Shift[:echo], Shift::Identity
   end
 
   test 'returns available mapping for a path' do
@@ -48,10 +60,13 @@ class ShiftTest < TestCase
   test 'returns second prioritized mapping when it is available but not the first' do
   end
 
-  test 'raises DependencyError when none of the mappings are available' do
-
-    # read
-    # readwrite
+  test 'raises DependencyError when no components available' do
+    begin
+      Shift[:unavailable] # defined in test/support.rb
+      assert false, 'did not raise'
+    catch DependencyError => err
+      assert_match err, /meditate/, 'bad message'
+    end
   end
 
 end

@@ -7,8 +7,24 @@ module Shift
   #
   class Identity
 
+    # Mixed into the resulting strings to make them easy to save.
+    #
+    module StringExtension
+
+      # Write the string to a sepcified path.
+      #
+      def write(path)
+        File.open(path, 'w') do |file|
+          file.write(self)
+        end
+        self
+      end
+    end
+
+
     # One-liner on what the user must have/do to make it available.
     # Used in DependencyError.
+    #
     INSTRUCTIONS = 'Google it :)'
 
     # Wether the requirements are met in the current environment.
@@ -19,7 +35,7 @@ module Shift
       true
     end
 
-    # A default instance without user given options.
+    # A default instance without options.
     #
     def self.default
       @default ||= new
@@ -46,36 +62,7 @@ module Shift
     # @return [String] The processed `String`
     #
     def read(path)
-      process(File.read(path))
-    end
-
-    # Read and process files, writing to new files.
-    #
-    # @param [Hash] hsh A hash where the keys and values are
-    #   strings representing file paths, as in
-    #   `'source.js' => 'source.min.js'`
-    #
-    def readwrite(hsh)
-      hsh.each do |from, to|
-        File.open(to, 'w') do |file|
-          file.write(read(from))
-        end
-      end
-    end
-
-    # Process strings, writing to new files.
-    #
-    # @param [Hash] hsh A hash where the keys are strings
-    #   to be processed, and the values are file path strings,
-    #   where the results are to be saved, as in
-    #   `'some frog pog with a hat' => 'myfile.frog'`.
-    #
-    def write(hsh)
-      hsh.each do |str, to|
-        File.open(to, 'w') do |file|
-          file.write(process(str))
-        end
-      end
+      process(File.read(path)).extend(StringExtension)
     end
 
   end
