@@ -7,5 +7,9 @@ task :test do
   Dir.glob("test/**/*_test.rb").each { |test| require "./#{test}" }
 end
 
+task :shell do
+  system 'pry -I lib -r shift'
+end
+
 task :default => :test
 

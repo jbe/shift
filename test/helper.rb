@@ -1,3 +1,4 @@
+require 'tempfile'
 
 class TestCase < MiniTest::Unit::TestCase
   def self.test(name, &block)
@@ -9,14 +10,28 @@ class TestCase < MiniTest::Unit::TestCase
     define_method(test_name, &block)
   end
 
-  def with_tempfile
+  def with_tempfile(data=nil)
     file = Tempfile.new('shift_test')
-    yield(file)
-    file.close; file.unlink
+    file.write(data) if data
+    file.close
+    yield(file.path)
+    file.unlink
   end
 
   def file(name)
     File.join(File.dirname(__FILE__), 'data', name)
   end
+
 end
+
+
+
+
+
+module Unavabelizer
+  def available?
+    false
+  end
+end
+
 

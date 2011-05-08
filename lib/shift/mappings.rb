@@ -23,8 +23,9 @@ module Shift
       kls = const_get(kls_name)
       return kls if kls.available?
     end
-    raise DependencyError, "no implementation available for #{key}.\n" +
-          "Possible solution: #{kls::INSTRUCTIONS}"
+    help = const_get(MAPPINGS[key].first)::INSTRUCTIONS
+    raise DependencyError, "no implementation available for " +
+      "#{key.inspect}. Possible solution: #{help}"
   end
 end
 

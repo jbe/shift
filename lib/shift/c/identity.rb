@@ -41,14 +41,22 @@ module Shift
       @default ||= new
     end
 
+    def self.new(*prms)
+      unless available?
+        raise Shift::DependencyError, "#{self} not available. " +
+              "Possible fix: #{INSTRUCTIONS}"
+      end
+      super
+    end
+
     # Create a new instance. Ignores the given options.
     #
-    def initialize(opts); end
+    def initialize(opts={}); end
 
     # Process the supplied string, returning the resulting `String`.
     #
     def process(str)
-      str.dup
+      str.dup.extend(StringExtension)
     end
     alias :compress   :process
     alias :compile    :process
@@ -66,4 +74,7 @@ module Shift
     end
 
   end
+  Echo = Identity
 end
+
+

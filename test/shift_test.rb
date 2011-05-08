@@ -2,16 +2,10 @@ require File.join(File.dirname(__FILE__), 'helper')
 require File.join(File.dirname(__FILE__), 'support')
 
 
-require 'tempfile'
-
-
-
 
 
 # Test Shift base module methods
 class ShiftTest < TestCase
-
-
 
   test 'read nonexistant file' do
     assert_raises(Errno::ENOENT) do
@@ -25,9 +19,9 @@ class ShiftTest < TestCase
   end
 
   test 'reads existing file and writes result' do
-    with_tempfile do |tmp|
-      Shift.read(file('letter.echo')).write(tmp.path)
-      assert_equal(IO.read(file 'letter.echo'), IO.read(tmp.path))
+    with_tempfile do |path|
+      Shift.read(file('letter.echo')).write(path)
+      assert_equal(IO.read(file 'letter.echo'), IO.read(path))
     end
   end
 
@@ -38,48 +32,34 @@ class ShiftTest < TestCase
     assert_kind_of Hash, Shift::MAPPINGS
   end
 
-  test 'read unmapped file' do
+  test 'reads unmapped file' do
     assert_raises(Shift::UnknownFormatError) do
       Shift.read('oy-oy-oy.noformatforthis')
     end
   end
 
-  test 'returns available mapping for a file type' do
-    assert_equal Shift[:echo], Shift::Identity
+  test 'gets available mapping' do
+    assert_equal Shift[:echo], Shift::Identity, 'given type'
+    assert_equal Shift['treaty.null'], NullComponent, 'given path'
+    assert_equal Shift['some/path/hey.bingo.bongo'],
+                 NullComponent, 'with detailed mapping'
   end
 
-  test 'returns available mapping for a path' do
+  test 'prioritizes' do
+    assert_equal Shift['file.null'], NullComponent,
+                 'first when available'
+    assert_equal Shift['file.prioritized'], NullComponent,
+                 'second when available but not first'
   end
 
-  test 'returns deeper mapping for a path' do
-  end
-
-  test 'returns first prioritized mapping when it is available' do
-  end
-
-  test 'returns second prioritized mapping when it is available but not the first' do
-  end
-
-  test 'raises DependencyError when no components available' do
+  test 'raises DependencyError' do
     begin
       Shift[:unavailable] # defined in test/support.rb
-      assert false, 'did not raise'
-    catch DependencyError => err
-      assert_match err, /meditate/, 'bad message'
+      assert false, 'when no components available'
+    rescue Shift::DependencyError => err
+      assert_match /meditate/, err.message, 'with helpful message'
     end
   end
 
 end
 
-# Test Shift::Identity.
-class IdentityTest < TestCase
-  test 'provides default instance'
-  test 'allows accessing options'
-  test 'processes'
-  test 'reads and compiles'
-  # the usual ruby system file errors will just pass through,
-  # no use in testing for them.
-  test 'reads, compiles and writes'
-  test 'compiles and writes'
-  test 'throws DependencyError if used when not available'
-end

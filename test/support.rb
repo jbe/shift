@@ -3,15 +3,15 @@ class UnavailableComponent < Shift::Identity
   
   INSTRUCTIONS = 'meditate.'
 
-  def available?
+  def self.available?
     false
   end
 
 end
 
-class NullComponent
+class NullComponent < Shift::Identity
 
-  def available?
+  def self.available?
     true
   end
 
@@ -21,5 +21,17 @@ class NullComponent
 
 end
 
-
 Shift::MAPPINGS['unavailable'] = ['UnavailableComponent'] * 10
+
+Shift::MAPPINGS['null']             = %w{NullComponent}
+Shift::MAPPINGS['bingo.bongo']  = %w{NullComponent}
+
+Shift::MAPPINGS['prioritized'] = %w{UnavailableComponent
+                          NullComponent Identity}
+
+
+
+
+
+
+
