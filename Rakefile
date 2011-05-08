@@ -23,8 +23,8 @@ begin
   Grancher::Task.new do |g|
     g.branch = 'gh-pages'
     g.push_to = 'origin'
-    g.message = 'docs -> gh-pages'
-    g.directory 'docs'
+    g.message = 'publish docs to gh-pages'
+    g.directory 'doc'
   end
 
   task :publish => :yard
