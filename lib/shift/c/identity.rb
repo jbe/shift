@@ -32,7 +32,20 @@ module Shift
     # stuff is available.
     #
     def self.available?
-      true
+      gem_dependencies.all? {|d| Gem.available?(d) }
+    end
+
+    # A list of Rubygems needed for the component to work.
+    #
+    def self.gem_dependencies
+      []
+    end
+
+    # The class of the wrapped compiler, or false if none
+    # is used.
+    #
+    def self.compiler_class
+      false
     end
 
     # A default instance without options.
@@ -51,16 +64,29 @@ module Shift
 
     # Create a new instance. Ignores the given options.
     #
-    def initialize(opts={}); end
+    def initialize(opts={})
+      self.class.gem_dependencies.each do |str|
+        require str
+      end
+      if self.class.compiler_class
+        @engine = self.class.compiler_class.new(opts)
+      end
+    end
 
-    # Process the supplied string, returning the resulting `String`.
+    # Process the supplied string, returning the resulting `String` (with a #write method attached to it).
     #
     def process(str)
-      str.dup.extend(StringExtension)
+      process_plain(str).extend(StringExtension)
     end
     alias :compress   :process
     alias :compile    :process
     alias :transform  :process
+
+    # Process the supplied string, returning the resulting `String`.
+    #
+    def process_plain(str)
+      str.dup
+    end
 
     # Read and process a file.
     #

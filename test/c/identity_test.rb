@@ -8,10 +8,14 @@ class IdentityTest < TestCase
   end
 
   def instance
-    subject.new
+    @instance ||= subject.new(options)
   end
 
-  def sample_transformations
+  def options
+    {}
+  end
+
+  def transformations
     {
       'echo'        => 'echo',
       ''            => ''
@@ -31,7 +35,7 @@ class IdentityTest < TestCase
   end
 
   test 'process' do
-    sample_transformations.each do |a, b|
+    transformations.each do |a, b|
       assert_equal b, instance.process(a)
     end
   end
@@ -40,7 +44,7 @@ class IdentityTest < TestCase
   # no use in testing for them.
 
   test 'read' do
-    sample_transformations.each do |a, b|
+    transformations.each do |a, b|
       with_tempfile(a) do |path|
         assert_equal b, instance.read(path)
       end
@@ -48,7 +52,7 @@ class IdentityTest < TestCase
   end
 
   test 'read and write' do
-    sample_transformations.each do |a, b|
+    transformations.each do |a, b|
       with_tempfile(a) do |src_path|
         with_tempfile do |trg_path|
           instance.read(src_path).write(trg_path)
@@ -59,7 +63,7 @@ class IdentityTest < TestCase
   end
 
   test 'process and write' do
-    sample_transformations.each do |a, b|
+    transformations.each do |a, b|
       with_tempfile do |path|
         instance.process(a).write(path)
         assert_equal b, IO.read(path)
