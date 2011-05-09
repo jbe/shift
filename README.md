@@ -1,5 +1,5 @@
 
-Shift (draft)
+Shift
 =====
 
 **State and logic-less compiler and compressor interface**
