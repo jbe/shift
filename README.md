@@ -15,7 +15,7 @@ Shift is a generic Ruby interface to different compilers, compressors, transform
 
 ```bash
 
-  gem install tilt
+  gem install shift
 
 ```
 
