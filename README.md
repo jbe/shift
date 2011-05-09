@@ -92,11 +92,11 @@ You can also do:
 
 ### Why not use or extend Tilt instead?
 
-I am making a separate library for this rather than extending Tilt, because i would usually only need one of the two in a given context. One and two step compilation are somewhat different things. Shift is more on the build side. Tilt is more on the dynamic side.
+I am making a separate library for this rather than extending Tilt, because i would usually only need one of the two in a given context. One and two step rendering are somewhat different things. Shift is more on the build side. Tilt is more on the dynamic side.
 
 ### Bye
 
-Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more. And once again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift). Contributions and feedback is welcome, of course.
+Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more, and again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift).
 
 ---
 
