@@ -9,7 +9,7 @@ module Shift
     'js'      => %w{ UglifyJS ClosureCompiler YUICompressor },
     'coffee'  => %w{ CoffeeScript },
     'sass'    => %w{ Sass },
-    'md'      => %w{ RDiscount }
+    'md'      => %w{ RDiscount Redcarpet }
   }
 
   # @raise [DependencyError] when none of the mapped
