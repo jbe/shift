@@ -23,6 +23,9 @@ module Shift
   autoload :YUICompressor,    'shift/c/yui_compressor'
   autoload :CoffeeScript,     'shift/c/coffee_script'
   autoload :Sass,             'shift/c/sass'
+  autoload :RDiscount,        'shift/c/rdiscount'
+  autoload :Redcarpet,        'shift/c/redcarpet'
+  autoload :RedCarpet,        'shift/c/redcarpet'
 
 
   # Read and process a file with the mapped component.
