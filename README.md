@@ -9,7 +9,7 @@ Shift (draft)
 Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for stuff that compiles in one step, without stateful template logic.
 
 * [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
-* [Available Shift components and their mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
+* [File type mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
 
 ### Installation
 
@@ -76,7 +76,18 @@ You can also do:
 
 ```
 
-### Why am I not just using or extending Tilt?
+### Available engines
+
+* UglifyJS
+* ClosureCompiler
+* YUICompressor
+* CoffeeScript
+* Sass
+* RDiscount
+* Redcarpet
+
+
+### Why not use or extend Tilt instead?
 
 I am making a separate library for this rather than extending Tilt, because i would usually only need one of the two in a given context. One and two step compilation are somewhat different things. Shift is more on the build side. Tilt is more on the dynamic side.
 

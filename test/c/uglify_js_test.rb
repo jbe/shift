@@ -18,7 +18,7 @@ class UglifyJSTest < IdentityTest
   end
 
   def options
-    {:compilation_level => 'ADVANCED_OPTIMIZATIONS'}
+    {}
   end
 
   def transformations

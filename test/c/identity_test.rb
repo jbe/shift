@@ -24,8 +24,8 @@ class IdentityTest < TestCase
 
   test 'instructions' do
     unless subject == Shift::Identity
-      refute_same subject::INSTRUCTIONS,
-                  subject.superclass::INSTRUCTIONS
+      refute_same subject.instructions,
+                  subject.superclass.instructions,
                   'gives instructions'
     end
   end

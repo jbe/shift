@@ -25,7 +25,13 @@ module Shift
     # One-liner on what the user must have/do to make it available.
     # Used in DependencyError.
     #
-    INSTRUCTIONS = 'Google it :)'
+    def self.instructions
+      if gem_dependencies.any?
+        'gem install ' + gem_dependencies.join(' ')
+      else
+        'Google it :)'
+      end
+    end
 
     # Wether the requirements are met in the current environment.
     # Typically checks if the required gems and/or command line
@@ -39,6 +45,12 @@ module Shift
     #
     def self.gem_dependencies
       []
+    end
+
+    # A list of things to be required on initialization.
+    #
+    def self.require_libs
+      gem_dependencies
     end
 
     # The class of the wrapped compiler, or false if none
@@ -57,19 +69,17 @@ module Shift
     def self.new(*prms)
       unless available?
         raise Shift::DependencyError, "#{self} not available. " +
-              "Possible fix: #{INSTRUCTIONS}"
+              "Possible fix: #{instructions}"
       end
+      @req ||= require_libs.each {|str| require str }
       super
     end
 
     # Create a new instance. Ignores the given options.
     #
-    def initialize(opts={})
-      self.class.gem_dependencies.each do |str|
-        require str
-      end
+    def initialize(*prms)
       if self.class.compiler_class
-        @engine = self.class.compiler_class.new(opts)
+        @engine = self.class.compiler_class.new(*prms)
       end
     end
 
