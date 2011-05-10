@@ -6,30 +6,27 @@ module Shift
 
     # Register mappings for a file type.
     #
-    def map(type, action_hsh)
-      actions = parse_actions(action_hsh)
+    def map(*args)
+      actions   = parse_actions(args.pop)
+      synonyms  = args.map {|t| t.to_s }
+      type      = synonyms.shift
 
-      synonyms = Array(type).map {|t| t.to_s }
-      type     = synonyms.shift
-
-      (MAP[type] ||= Hash.new).merge!(actions)
-      verify_acyclic_mappings
+      begin
+        backup = MAP[type]
+        (MAP[type] ||= Hash.new).merge!(actions)
+        verify_acyclic_mappings
+      rescue Shift::MappingError
+        if backup
+          MAP[type] = backup
+        else
+          MAP.delete(type)
+        end
+        raise
+      end
 
       synonyms.each {|s| synonym(s, type) }
     end
 
-    def parse_actions(actions)
-      unless actions.is_a?(Hash)
-        actions = {:default => Array(actions)}
-      end
-      actions.each do |name, action|
-        case action
-        when Symbol then nil
-        when Array  then actions[name] = action.map {|cls| cls.to_s }
-        else raise  MappingError, "invalid handler: #{action.inspect}"
-        end
-      end
-    end
 
     # Register a synonymous file type
     #
@@ -53,7 +50,35 @@ module Shift
       raise UnknownFormatError, "no mapping matches #{file}"
     end
 
+    def inspect_actions
+      MAP.group_by {|k,v| v }.map do |actions, map_ary|
+
+        
+        types = map_ary.map {|xhsh| xhsh.first }.flatten.uniq
+
+        actions = actions.select do |name, action|
+          action.is_a?(Array)
+        end.map {|k,v| k }
+
+        "#{types.join(', ')}: #{actions.join(', ')}"
+      end.join("\n")
+    end
+
 private
+
+    def parse_actions(actions)
+      unless actions.is_a?(Hash)
+        actions = {:default => Array(actions)}
+      end
+      actions.each do |name, action|
+        case action
+        when Symbol then nil
+        when Array  then actions[name] = action.map {|cls| cls.to_s }
+        when Class  then actions[name] = [action.to_s]
+        else raise  MappingError, "bad handler: #{action.inspect}"
+        end
+      end
+    end
 
     # @raise [DependencyError] when none of the mapped
     #   implementations are available.
@@ -85,14 +110,15 @@ private
       result = MAP[type][action]
 
       unless result
-        raise MappingError, "bad link: #{[type, action].inspect}"
+        raise MappingError, "invalid action #{action.inspect} " +
+                            "for type #{type.inspect}"
       end
 
       if result.is_a?(Array) # mapping
         result
       else # link
         if (visited << action).include?(result)
-          raise MappingError, 'Cycle detected: ' + visited
+          raise MappingError, 'Cycle detected: ' + visited.inspect
         end
         mappings_for(type, result, visited)
       end

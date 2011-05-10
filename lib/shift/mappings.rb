@@ -32,7 +32,7 @@ module Shift
     :compile  => %w{Sass}
     )
 
-  map(:md,
+  map(:md, :markdown,
     :default  => :render,
     :compile  => :render,
     :render   => %w{RDiscount Redcarpet}

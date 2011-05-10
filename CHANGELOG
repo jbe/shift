@@ -2,9 +2,11 @@
 
 HEAD
 
-  Action mappings
+  Named actions
+  Shift.inspect_mappings
+  Shell command
 
 
 0.1.0
 
-  First proper release. Good test coverage.
+  Working Rubygem with support for some formats.

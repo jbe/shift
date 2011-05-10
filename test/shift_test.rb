@@ -48,6 +48,56 @@ class ShiftTest < TestCase
                  'second when available but not first'
   end
 
+  test 'named action' do
+    assert_equal Shift['bingo.bongo'], NullComponent
+    assert_equal Shift['bingo.bongo', :custom], Shift::Identity
+  end
+
+  test 'allows mapping class' do
+    Shift.map(:doodle, Doodle)
+    assert_equal Shift[:doodle], Doodle
+  end
+
+  test 'synonym' do
+    assert_equal Shift[:blubber], Shift::Identity
+    assert_equal Shift[:blbr],    Shift::Identity
+    assert_equal Shift[:br],      Shift::Identity
+  end
+
+  test 'link' do
+    assert_equal Shift[:linked], Doodle
+  end
+
+  test 'invalid_action' do
+    assert_raises Shift::MappingError do
+      Shift[:linked, :african_swallow]
+    end
+  end
+
+  test 'invalid link' do
+    assert_raises Shift::MappingError do
+      Shift.map(:badlink,
+        :bad_link   => :space,
+        )
+    end
+  end
+
+  test 'cyclic link' do
+    assert_raises Shift::MappingError do
+      Shift.map(:cycle,
+        :back     => :onwards,
+        :onwards  => :fourth,
+        :fourth   => :back
+        )
+    end
+  end
+
+  test 'bad handler' do
+    assert_raises Shift::MappingError do
+      Shift.map(:blumchen, :bicycle => true)
+    end
+  end
+
   test 'raises DependencyError' do
     begin
       Shift[:unavailable] # defined in test/support.rb

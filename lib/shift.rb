@@ -22,8 +22,8 @@ module Shift
   #
   # (see Identity#read)
   #
-  def self.read(path, opts={})
-    self[path].new(opts).read(path)
+  def self.read(path, action=:default, type=nil)
+    self[type || path, action].new.read(path)
   end
 
 end

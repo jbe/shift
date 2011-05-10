@@ -23,6 +23,8 @@ class NullComponent < Shift::Identity
 
 end
 
+class Doodle < Shift::Identity; end
+
 module Shift
   map(:unavailable,   ['UnavailableComponent'] * 10)
   map(:null,          %w{NullComponent})
@@ -30,5 +32,15 @@ module Shift
     :default => %w{NullComponent},
     :custom  => %w{Identity}
     )
+  map(:blubber, :blbr, :br, %w{Identity})
   map(:prioritized,   %w{UnavailableComponent NullComponent Identity})
+
+  map(:linked,
+    :default    => :dog,
+    :dog        => :cat,
+    :cat        => :mouse,
+    :mouse      => Doodle
+    )
 end
+
+

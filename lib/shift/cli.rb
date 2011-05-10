@@ -1,20 +1,30 @@
 
 
 module Shift
-  # The shift command line interface.
+
+  # The Shift command line interface.
+  #
   module CLI
     class << self
 
       def run!
-        if ARGV.empty?
-          puts "Usage:    shift [file] [action]\n" +
-               "In pipe:  shift [type] [action]"
-        else
-          require 'shift'
+        unless [1..3].include(ARGV.size)
+          abort "Usage:    shift [file] [action] [type]\n" +
+                "In pipe:  shift - [type] [action]\n\n" +
+                "Available types and actions:\n\n" +
+                Shift.inspect_actions
+        end
 
-          puts File.exists?(path) ?
-                Shift.read(*ARGV) :
-                Shift[ARGV[0]].process(STDIN.read)
+        require 'shift'
+
+        if ARGV[0] != '-'
+          puts Shift.read(*ARGV)
+        else
+          ARGV.shift
+          ARGV << :echo if ARGV.empty?
+          puts Shift[*ARGV].process(STDIN.read)
+        end
+
         end
       end
 
