@@ -28,10 +28,6 @@ class ShiftTest < TestCase
 
   # mappings
 
-  test 'has mappings' do
-    assert_kind_of Hash, Shift::MAPPINGS
-  end
-
   test 'reads unmapped file' do
     assert_raises(Shift::UnknownFormatError) do
       Shift.read('oy-oy-oy.noformatforthis')

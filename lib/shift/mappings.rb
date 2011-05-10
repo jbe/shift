@@ -1,32 +1,42 @@
 
 module Shift
-  
-  # Mappings from file names to implementation classes. The
-  # classes are listed in order of preference per type.
-  #
-  MAPPINGS = {
-    'echo'    => %w{ Identity },
-    'js'      => %w{ UglifyJS ClosureCompiler YUICompressor },
-    'coffee'  => %w{ CoffeeScript },
-    'sass'    => %w{ Sass },
-    'md'      => %w{ RDiscount Redcarpet }
-  }
+  extend Mapper
 
-  # @raise [DependencyError] when none of the mapped
-  #   implementations are available.
-  #
-  # @return [Class] The preferred available class associated
-  #   with the file or extension.
-  #
-  def self.best_available_mapping_for(key)
-    MAPPINGS[key].each do |kls_name|
-      kls = const_get(kls_name)
-      return kls if kls.available?
-    end
-    help = const_get(MAPPINGS[key].first)::INSTRUCTIONS
-    raise DependencyError, "no implementation available for " +
-      "#{key.inspect}. Possible solution: #{help}"
-  end
+  # components
+
+  autoload :Identity,         'shift/c/identity'
+  autoload :UglifyJS,         'shift/c/uglify_js'
+  autoload :ClosureCompiler,  'shift/c/closure_compiler'
+  autoload :YUICompressor,    'shift/c/yui_compressor'
+  autoload :CoffeeScript,     'shift/c/coffee_script'
+  autoload :Sass,             'shift/c/sass'
+  autoload :RDiscount,        'shift/c/rdiscount'
+  autoload :Redcarpet,        'shift/c/redcarpet'
+  autoload :RedCarpet,        'shift/c/redcarpet'
+
+  map(:echo, 'Identity')
+
+  map(:js,
+    :default  => :compress,
+    :minify   => :compress,
+    :compress => %w{UglifyJS YUICompressor ClosureCompiler}
+    )
+
+  map(:coffee,
+    :default  => :compile,
+    :compile  => %w{CoffeeScript}
+    )
+
+  map(:sass,
+    :default  => :compile,
+    :compile  => %w{Sass}
+    )
+
+  map(:md,
+    :default  => :render,
+    :compile  => :render,
+    :render   => %w{RDiscount Redcarpet}
+    )
+
 end
-
 

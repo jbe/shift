@@ -13,8 +13,13 @@ module Shift
   class DependencyError < Error; end
 
   # Raised when you try to read a file for which there are
-  # no mappings without specifying its type.
+  # no mappings, without specifying its type.
   #
   class UnknownFormatError < Error; end
+
+  # Raised when encountering invalid mappings, like
+  # when there is a cycle in the map.
+  #
+  class MappingError < Error; end
 
 end

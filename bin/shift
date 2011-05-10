@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'shift/cli'
+
+Shift::CLI.run!
