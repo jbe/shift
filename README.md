@@ -8,6 +8,16 @@ Shift
 
 Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for stuff that compiles in one step, without stateful template logic.
 
+Some features:
+
+* Small/fast
+* Simple
+* Can map different types of actions per format
+* Lazy loading
+* Command line tool
+
+Info:
+
 * [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
 * [File type mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
 
@@ -79,6 +89,33 @@ You can also do:
 
 ```
 
+You can even specify a particular action, to use the preferred available
+tool to accomplish that action with that format:
+
+```ruby
+
+  Shift[:js, :compress] # => Shift::UglifyJS
+  Shift[:js, :eval]     # => Shift::ExecJS
+
+```
+
+
+### Shell command line tool
+
+You can use `shifter` to do some nice stuff:
+
+```bash
+
+  shifter
+  shifter sheet.sass
+  shifter file.js compress
+  shifter style.s compile sass
+  
+  some-tool | shifter - js > myfile.min.js
+  some-tool | shifter - js compress > myfile.min.js
+
+```
+
 ### Available engines
 
 * UglifyJS
@@ -96,7 +133,7 @@ I am making a separate library for this rather than extending Tilt, because i wo
 
 ### Bye
 
-Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more, and again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift).
+Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more, and again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift). Adding new mappings is easy, so contribute away :)
 
 ---
 

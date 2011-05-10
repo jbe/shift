@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- spec/*`.split("\n")
   s.require_path  = 'lib'
   s.bindir        = 'bin'
+  s.executables   = ['shifter']
 end
