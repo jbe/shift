@@ -107,5 +107,16 @@ class ShiftTest < TestCase
     end
   end
 
+  test 'concat' do
+    with_tempfile('hello ') do |a|
+      with_tempfile('there') do |b|
+        with_tempfile do |c|
+          Shift.concat(a, b, c)
+          assert_equal IO.read(c), (IO.read(a) + IO.read(b))
+        end
+      end
+    end
+  end
+
 end
 

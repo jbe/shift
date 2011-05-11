@@ -10,8 +10,8 @@ class TestCase < MiniTest::Unit::TestCase
     define_method(test_name, &block)
   end
 
-  def with_tempfile(data=nil)
-    file = Tempfile.new('shift_test')
+  def with_tempfile(data=nil,fmt='')
+    file = Tempfile.new("shift_test#{fmt}")
     file.write(data) if data
     file.close
     yield(file.path)

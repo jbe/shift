@@ -26,5 +26,15 @@ module Shift
     self[type || path, action].new.read(path)
   end
 
+  def self.concat(*paths)
+    target = paths.pop
+    File.open(target, 'w') do |target_file|
+      paths.each do |source_path|
+        target_file.write(File.read(source_path))
+      end
+    end
+
+  end
+
 end
 
