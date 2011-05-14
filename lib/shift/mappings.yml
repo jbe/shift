@@ -1,0 +1,6 @@
+
+shift.global:
+  gzip: ZlibCompressor
+
+echo:
+  default: :echo

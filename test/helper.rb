@@ -18,20 +18,10 @@ class TestCase < MiniTest::Unit::TestCase
     file.unlink
   end
 
-  def file(name)
-    File.join(File.dirname(__FILE__), 'data', name)
-  end
-
 end
 
 
 
 
-
-module Unavabelizer
-  def available?
-    false
-  end
-end
 
 

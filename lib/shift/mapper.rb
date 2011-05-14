@@ -1,134 +1,93 @@
 
 module Shift
-  module Mapper
 
-    MAP = {}
+  require 'shift/interface_list'
+  require 'shift/action_map'
 
-    # Register mappings for a file type.
+  MAP = {}
+
+  # Herein lies the logic concerned with mapping (format, action)
+  # to compiler interfaces.
+  #
+  class << self
+
+    # Global actions that apply to all types
     #
-    def map(*args)
-      actions   = parse_actions(args.pop)
-      synonyms  = args.map {|t| t.to_s }
-      type      = synonyms.shift
+    def global
+      @global ||= ActionMap.new(nil)
+    end
+    attr_writer :global
 
-      begin
-        backup = MAP[type]
-        (MAP[type] ||= Hash.new).merge!(actions)
-        verify_acyclic_mappings
-      rescue Shift::MappingError
-        if backup
-          MAP[type] = backup
-        else
-          MAP.delete(type)
+    # Register mappings for file types.
+    #
+    def map(*synonyms)
+      actions = synonyms.pop
+
+      synonyms.each do |syn|
+        am = MAP[syn.to_s] ||= ActionMap.new(global, actions)
+      end
+    end
+
+    # Get the preferred available class mapped to the given format 
+    # or path and action.
+    #
+    def [](name, action=:default)
+      try_to_match(name) do |fmt|
+
+        if action_map = MAP[fmt]
+          if iface_list = action_map[action]
+            return iface_list.pick
+          else
+            raise UnknownActionError,
+              "#{action.inspect} with format #{name.inspect}."
+          end
         end
-        raise
+        return global[action].pick if global[action]
       end
-
-      synonyms.each {|s| synonym(s, type) }
+      raise UnknownFormatError, "no mappings for #{name}"
     end
 
 
-    # Register a synonymous file type
-    #
-    def synonym(new_term, old_term)
-      MAP[new_term] = MAP[old_term]
+    def synonyms
+      MAP.group_by do |name, actions|
+        actions
+      end.map do |action_map, hsh_ary|
+        hsh_ary.map {|k,v| k }.flatten.uniq
+      end
     end
 
-    # Get the preferred available class mapped to match the
-    # given filename or extension.
-    #
-    # @raise [UnknownFormatError] when none of the mappings match.
-    #
-    # (see Shift.best_available_mapping_for)
-    #
-    def [](filename, action=:default)
-      pattern = File.basename(filename.to_s.downcase)
-      until pattern.empty?
-        return best_available(pattern, action) if MAP[pattern]
-        pattern.sub!(/^[^.]*\.?/, '')
+    def action_overview(globals=false)
+      result = {}
+      synonyms.each do |group|
+        result[group] = group.map do |fmt|
+          MAP[fmt].atoms(globals).keys
+        end.uniq
       end
-      raise UnknownFormatError, "no mapping matches #{file}"
+      result
     end
 
     def inspect_actions
-      MAP.group_by {|k,v| v }.map do |actions, map_ary|
+      buf = []
+      buf << "GLOBAL: #{global.atoms(true).keys.join(', ')}"
 
-        
-        types = map_ary.map {|xhsh| xhsh.first }.flatten.uniq
+      action_overview.each do |types, actions|
+        buf << "#{types.join(', ')}: #{actions.join(', ')}"
+      end
 
-        actions = actions.select do |name, action|
-          action.is_a?(Array)
-        end.map {|k,v| k }
-
-        "#{types.join(', ')}: #{actions.join(', ')}"
-      end.join("\n")
+      buf.join("\n")
     end
 
-private
+  private
 
-    def parse_actions(actions)
-      unless actions.is_a?(Hash)
-        actions = {:default => Array(actions)}
-      end
-      actions.each do |name, action|
-        case action
-        when Symbol then nil
-        when Array  then actions[name] = action.map {|cls| cls.to_s }
-        when Class  then actions[name] = [action.to_s]
-        else raise  MappingError, "bad handler: #{action.inspect}"
-        end
-      end
-    end
-
-    # @raise [DependencyError] when none of the mapped
-    #   implementations are available.
+    # Given a file name, yield all the formats it could match.
     #
-    # @return [Class] The preferred available class associated
-    #   with the file or extension.
-    #
-    def best_available(type, action=:default)
-      mappings = mappings_for(type, action)
+    def try_to_match(name)
+      return yield name if name.nil?
 
-      mappings.each do |kls_name|
-        kls = const_get(kls_name)
-        return kls if kls.available?
-      end
-
-      raise DependencyError, "no implementation available for " +
-        [type, action].inspect + dependency_help(mappings)
-    end
-
-    def dependency_help(mappings)
-      if mappings.any?
-        " Possible solution: " + const_get(mappings.first).instructions
-      else ''; end
-    end
-
-
-    def mappings_for(type, action, visited=[])
-      action = action.to_sym
-      result = MAP[type][action]
-
-      unless result
-        raise MappingError, "invalid action #{action.inspect} " +
-                            "for type #{type.inspect}"
-      end
-
-      if result.is_a?(Array) # mapping
-        result
-      else # link
-        if (visited << action).include?(result)
-          raise MappingError, 'Cycle detected: ' + visited.inspect
-        end
-        mappings_for(type, result, visited)
-      end
-    end
-
-    def verify_acyclic_mappings
-      MAP.each do |type, actions|
-        actions.each_key do |action|
-          mappings_for(type, action)
-        end
+      pattern = File.basename(name.to_s.downcase)
+      until pattern.empty?
+        yield pattern
+        pattern.sub!(/^[^.]*\.?/, '')
       end
     end
 

@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.version   = Shift::VERSION
   s.platform  = Gem::Platform::RUBY
 
-  s.summary       = 'Shift is a generic interface to different compilers, compressors, etc.'
-  s.description   = 'Shift is a generic interface to different compilers, compressors, etc. What the Tilt gem does for template languages, Shift does for compilers and compressors.'
+  s.summary       = 'Compiler and transformer interface framework'
+  s.description   = 'Shift is a generic interface to different compilers, compressors, and so on. You can use it to build chains, like Shift.read("cup.coffee").compile.minify.write'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- spec/*`.split("\n")

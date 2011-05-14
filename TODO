@@ -1,0 +1,3 @@
+
+- Support IO streams?
+- Shift::Array which delegates methods to its members

@@ -1,7 +1,7 @@
-require File.join(File.dirname(__FILE__), 'identity_test')
+require File.join(File.dirname(__FILE__), '..', 'interface_test')
 
 
-class ClosureCompilerTest < IdentityTest
+class ClosureCompilerTest < InterfaceTest
 
   FUNCTION = <<-eos
     function hello(name) {
@@ -28,6 +28,10 @@ class ClosureCompilerTest < IdentityTest
       FUNCTION    => "\n",
       INVOCATION  => "hello(\"New user\");\n"
     }
+  end
+
+  def name_transformations
+    { 'script.js' => 'script.min.js' }
   end
 
 end

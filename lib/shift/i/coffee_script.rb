@@ -1,6 +1,6 @@
 
 module Shift
-  class CoffeeScript < Identity
+  class CoffeeScript < Interface
 
     def self.gem_dependencies
       %w{coffee-script}
@@ -10,12 +10,15 @@ module Shift
       %w{coffee-script}
     end
 
+    def self.target_format
+      'js'
+    end
+
     def initialize(opts={})
       @opts = opts
     end
     
-
-    def process_plain(str)
+    def process(str)
       ::CoffeeScript.compile(str, @opts)
     end
 

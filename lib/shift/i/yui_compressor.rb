@@ -1,6 +1,6 @@
 
 module Shift
-  class YUICompressor < Identity
+  class YUICompressor < Interface
 
     def self.gem_dependencies
       %w{yui-compressor}
@@ -10,11 +10,15 @@ module Shift
       %w{yui/compressor}
     end
 
-    def self.compiler_class
+    def self.engine_class
       YUI::JavaScriptCompressor
     end
 
-    def process_plain(str)
+    def self.target_format
+      'min.js'
+    end
+
+    def process(str)
       @engine.compress(str)
     end
 

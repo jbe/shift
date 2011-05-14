@@ -2,4 +2,4 @@
 
 require 'shift/cli'
 
-Shift::CLI.run!
+Shift::CLI.new.run!

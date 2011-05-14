@@ -1,17 +1,21 @@
 
 
 module Shift
-  class UglifyJS < Identity
+  class UglifyJS < Interface
 
     def self.gem_dependencies
       %w{uglifier}
     end
 
-    def self.compiler_class
+    def self.engine_class
       Uglifier
     end
 
-    def process_plain(str)
+    def self.target_format
+      'min.js'
+    end
+
+    def process(str)
       @engine.compile(str)
     end
 

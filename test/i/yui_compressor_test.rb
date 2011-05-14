@@ -1,7 +1,7 @@
-require File.join(File.dirname(__FILE__), 'identity_test')
+require File.join(File.dirname(__FILE__), '..', 'interface_test')
 
 
-class YUICompressorTest < IdentityTest
+class YUICompressorTest < InterfaceTest
 
   FUNCTION = <<-eos
     function hello(name) {
@@ -28,6 +28,10 @@ class YUICompressorTest < IdentityTest
       FUNCTION    => "function hello(name){alert(\"Hello, \"+name)};",
       INVOCATION  => "hello(\"New user\");"
     }
+  end
+
+  def name_transformations
+    { 'script.js' => 'script.min.js' }
   end
 
 end

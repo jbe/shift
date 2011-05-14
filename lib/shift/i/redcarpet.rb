@@ -1,15 +1,19 @@
 module Shift
-  class Redcarpet < Identity
+  class Redcarpet < Interface
 
     def self.gem_dependencies
       %w{redcarpet}
+    end
+
+    def self.target_format
+      'html'
     end
 
     def initialize(*switches)
       @switches = switches
     end
     
-    def process_plain(str)
+    def process(str)
       ::Redcarpet.new(str, *@switches).to_html
     end
 

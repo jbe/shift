@@ -8,7 +8,7 @@ task :test do
 end
 
 task :shell do
-  system 'pry -I lib -r shift'
+  system 'pry -I lib -r shift --trace'
 end
 
 task :default => :test

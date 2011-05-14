@@ -1,23 +1,18 @@
 
 
 HEAD
-
-  Shift.concat
-
+  Major restructuring
+  Shift::String for method chaning
+  Interface defaults
+  Gzip support
 
 0.3.0
-
   Shell command
 
-
 0.2.0
-
   Shift.inspect_mappings
   Named actions
 
-
 0.1.0
-
   Working Rubygem with support for some formats.
-
 

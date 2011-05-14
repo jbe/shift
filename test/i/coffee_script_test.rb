@@ -1,7 +1,7 @@
-require File.join(File.dirname(__FILE__), 'identity_test')
+require File.join(File.dirname(__FILE__), '..', 'interface_test')
 
 
-class CoffeeScriptTest < IdentityTest
+class CoffeeScriptTest < InterfaceTest
 
   def subject
     Shift::CoffeeScript
@@ -18,6 +18,10 @@ class CoffeeScriptTest < IdentityTest
       'frog -> "croak"' =>
         "frog(function() {\n  return \"croak\";\n});"
     }
+  end
+
+  def name_transformations
+    { 'cup.coffee' => 'cup.js' }
   end
 
 end

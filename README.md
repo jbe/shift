@@ -2,111 +2,153 @@
 Shift
 =====
 
-**State and logic-less compiler and compressor interface**
+**Compiler and compressor interface**
 
 ---
 
-Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. What the [Tilt](https://github.com/rtomayko/tilt) gem does for template languages, Shift does for stuff that compiles in one step, without stateful template logic.
+Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. It is also an easy way to chain actions that transform something and build compiler chains.
 
-Some features:
+* Installation: `gem install shift`
+* API Documentation
+  * [Latest Gem](http://rubydoc.info/gems/shift/frames)
+  * [Github master](http://rubydoc.info/github/jbe/shift/master/frames)
+* [Default mappings](https://github.com/jbe/shift/blob/master/lib/shift/mappings.rb)
 
-* Small/fast
-* Simple
-* Can map different types of actions per format
-* Lazy loading
-* Command line tool
+Shift contains:
 
-Info:
+* A convention for compiler interfaces
+* A collection of such interfaces for common compilers, compressors etc.
+* A way to describe actions that can be performed on a given format (such as `:render` for `markdown` files)
+  * A way to map such format actions to lists of compilers performing that action
+  * A way to return the best available compiler from such a list
+* Default mappings for all of the above
 
-* [Documentation](http://rubydoc.info/github/jbe/shift/master/frames)
-* [File type mappings](http://rubydoc.info/github/jbe/shift/master/Shift)
 
-### Installation
-
-```bash
-
-  gem install shift
-
-```
-
-### Usage
-
-To read and process a file, using the preferred available default component for that filetype:
+This means you can do things like
 
 ```ruby
 
-  Shift.read('thefile.js') # => minified js string
+(Shift.read('cup.coffee').compile.compress << '/* pidgeon */'
+  ).gzip.write
 
 ```
 
-Or to read, process, and then write:
+This reads `cup.coffee`, compiles it using coffeescript, compresses it using UglifyJS, appends the pidgeon comment to the minified javascript, gzips all of that, and then saves it as `cup.min.js.gz`. Since no file name was given, it is determined automatically.
+
+The aim is to include a large library of interfaces, which are lazy loaded on demand, to allow a huge variety of operations.
+
+
+### Examples
 
 ```ruby
 
-  Shift.read('canopy.sass').write('canopy.css')
+  str = Shift("hello", "hi.markdown") # => "hello"
+  str.class # => Shift::String
+  str.name # => "hi.markdown"
+  
+  result = str.render # => "<p>hello</p>"
+  result.name # => "hi.html"
 
 ```
 
-The components can also be used directly:
+The `Shift::String` works like a normal string, except that it has an associated name, and that it can be transformed like we just did. The string name is theoretical only; it does not necessarily exist as a file. Therefore, it can also simply represent the format. There are methods to read and write from file paths however:
 
 ```ruby
 
-  cc = Shift::ClosureCompiler.new(:compilation_level => 'ADVANCED_OPTIMIZATIONS')
-  minified_js_string  = cc.read(path)
+  str_a = Shift.read('script.js') # => "var hello; hello = 31;"
+  str_a.class # => Shift::String
+
+  str_b = Shift('hello', 'message.txt')
+  str_b.write
+  str_b.write('message_copy.txt')
 
 ```
 
-To simply process a string, or to process and save a string:
+Pretty handy. It can automatically write the string to the path that it automatically figured out.
+
+Now, in the first example, how did it know how to render markdown? Because i have RDiscount installed and it is the preferred default interface for doing `:render` to `.markdown` files.
 
 ```ruby
 
-  md = Shift::RDiscount.new
-  md.process("hello *there*") # => "<p>hello <em>there</em></p>"
-  md.process("hello *there*").write('message.html')
+  str = Shift("hello", "hi.markdown") # => "hello"
+  str.render # => "<p>hello</p>"
+  str.interface # => #<Shift::RDiscount:0xa0ad818>
 
-```
-To see if a component is available (check if the gem is installed and so on):
-
-```ruby
-
-  Shift::YUICompressor.available?.
-
-```
-
-To get the first available preferred default component class for a file:
-
-```ruby
-
+  Shift[:markdown] # => Shift::RDiscount
+  Shift[:md] # => Shift::RDiscount
   Shift['somefile.js'] # => Shift::UglifyJS
 
-```
-
-You can also do:
-
-```ruby
-
-  Shift[:md] # => Shift::RDiscount
-
-```
-
-You can even specify a particular action, to use the preferred available
-tool to accomplish that action with that format:
-
-```ruby
-
   Shift[:js, :compress] # => Shift::UglifyJS
-  Shift[:js, :eval]     # => Shift::ExecJS
+  Shift[:js, :gzip]     # => Shift::ZlibCompressor
+
+  puts Shift.inspect_actions
+  # =>
+  # GLOBAL: gzip
+  # echo: default
+  # coffee: compile
+  # gzip, gz: inflate
+  # js: compress
+  # md, markdown: render
+  # sass: compile
+
+```
+If i tried to look up a format, and it had mappings, but none of the underlying handlers were available, Shift would raise a `Shift::DependencyError` including installation instructions.
+
+What if i want to work with the interfaces without any magic?
+
+```ruby
+
+  Shift::ClosureCompiler.available? # => true
+
+  iface = Shift::ClosureCompiler.new(
+    :compilation_level => 'ADVANCED_OPTIMIZATIONS')
+  iface.process(str)
+  iface.rename(file_path)
 
 ```
 
+Being interfaces, they all work the same way.
 
-### Shell command line tool
 
-You can use `shifter` to do some nice stuff:
+### Defining new mappings
+
+```ruby
+
+  Shift.map('myformat', 'myaliasformat',
+    :default => :crush,
+    :crush => 'MyFormatCrusher',
+    :stabilize => %w{MyFormatStabilizer AlternativeMyFormatStabilizer}
+    )
+
+```
+
+Or globally, for all formats:
+
+```ruby
+  Shift.global.map(
+    :mix_up => 'Mixuper'
+    )
+```
+
+To reset all mappings:
+
+```ruby
+
+  Shift::MAP = {}
+
+```
+
+* [Default mappings](https://github.com/jbe/shift/blob/master/lib/shift/mappings.rb)
+
+
+### Shifter command line tool
+
+There is also a command line tool called `shifter`.
 
 ```bash
 
   shifter
+
   shifter sheet.sass
   shifter file.js compress
   shifter style.s compile sass
@@ -116,24 +158,10 @@ You can use `shifter` to do some nice stuff:
 
 ```
 
-### Available engines
-
-* UglifyJS
-* ClosureCompiler
-* YUICompressor
-* CoffeeScript
-* Sass
-* RDiscount
-* Redcarpet
-
-
-### Why not use or extend Tilt instead?
-
-I am making a separate library for this rather than extending Tilt, because i would usually only need one of the two in a given context. One and two step rendering are somewhat different things. Shift is more on the build side. Tilt is more on the dynamic side.
 
 ### Bye
 
-Bye Bye, see you. There are proper [docs](http://rubydoc.info/github/jbe/shift/master/frames) if you want more, and again, [the mappings are there too](http://rubydoc.info/github/jbe/shift/master/Shift). Adding new mappings is easy, so contribute away :)
+Bye Bye, see you. Contribute some interfaces and mappings if you want to.
 
 ---
 
