@@ -1,3 +1,5 @@
 
+- A MethodCompiler class or Gem to do what Tilt does.
+- Mappings for common formats, like Tilt.
 - Support IO streams?
 - Shift::Array which delegates methods to its members
