@@ -9,7 +9,7 @@
 
 module Shift
 
-  VERSION = '0.3.0'
+  VERSION = '0.4.0'
 
   require 'shift/errors'
   require 'shift/mapper'

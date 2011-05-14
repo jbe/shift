@@ -1,9 +1,11 @@
 
 
 HEAD
+  Interface defaults
+
+0.4.0
   Major restructuring
   Shift::String for method chaning
-  Interface defaults
   Gzip support
 
 0.3.0
