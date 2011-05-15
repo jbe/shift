@@ -1,5 +1,6 @@
 
+- Document: How to write interfaces
 - A MethodCompiler class or Gem to do what Tilt does.
-- Mappings for common formats, like Tilt.
+- Mappings for common formats, covering all of Tilt.
 - Support IO streams?
 - Shift::Array which delegates methods to its members
