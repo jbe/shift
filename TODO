@@ -4,3 +4,9 @@
 - Mappings for common formats, covering all of Tilt.
 - Support IO streams?
 - Shift::Array which delegates methods to its members
+
+
+interface namespace
+interface exceptions
+interface tests
+interface spec

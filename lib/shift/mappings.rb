@@ -17,17 +17,23 @@ module Shift
   #  :compile  => 'Haml'
   #  )
 
-  #map('haml.compiled',
+  #map('haml.rb',
   #  :default  => :render,
   #  :render   => 'HamlTemplate'
   #  )
 
-  #map(:rbt,
-  #  :default  => :render,
-  #  :render   => 'RubyTemplate'
+  #map(:temple,
+  #  :default   => :compile
+  #  :compile   => 'Temple'
   #  )
 
-  map(:gz,
+  # map(:rb, :ruby
+  #   :default  => nil,
+  #   :eval     => 'Ruby',
+  #   :compile  => 'CompiledRuby'
+  #   )
+
+  map(:gz, :gzip,
     :default  => :inflate,
     :decompress => :inflate,
     :unzip    => :inflate,
