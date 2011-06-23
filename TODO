@@ -1,22 +1,16 @@
 
-*: constantize
-RubySource: evaluate, safe_eval, compile
-RubyTemplate: make_portable
-CompiledRuby: call(binding, locals)
-Gzip: decompress, inflate, unzip
-CoffeeScript: compile
-HamlTemplate: compile
-CompiledHaml: render
 
-- Test Shift::Data::BasicFile
-- Data classes
-- A MethodCompiler class or Gem to do what Tilt does.
-- Mappings for common formats, covering all of Tilt.
+- Port remaining data classes
+- Graceful depency fallbacks using LazyLoad
+
+
+# On the horizon:
+
 - Shift::Array which delegates methods to its members
+- Tilt coverage
+- A MethodCompiler class or Gem to do what Tilt does.
 
+RubySource: evaluate, safe_eval, compile
+CompiledRuby: call(binding, locals)
+RubyTemplate: make_portable
 
-
-interface namespace
-interface exceptions
-interface tests
-interface spec
