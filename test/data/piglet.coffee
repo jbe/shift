@@ -1,5 +1,0 @@
-
-
-piglet = -> 'grunt grunt'
-
-piglet()

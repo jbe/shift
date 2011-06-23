@@ -21,4 +21,6 @@ Gem::Specification.new do |s|
   s.require_path  = 'lib'
   s.bindir        = 'bin'
   s.executables   = ['shifter']
+
+  s.add_dependency 'lazy_load', '>= 0.0.3'
 end

@@ -1,7 +1,10 @@
 
 
 HEAD
-  Interface defaults
+  Major architectural and philosophical change:
+  No more focus on interfaces and lazy loading
+  Depend on lazy_load gem
+  Transformation-oriented architecture
 
 0.4.0
   Major restructuring

@@ -6,6 +6,12 @@ module Shift
   #
   class Error < StandardError; end
 
+  # bad/unrecognized data formats
+  class DataError < Error; end
+
+  # invalid/nonexistant virtual file paths
+  class PathError < Error; end
+
   # Raised when the environment needed to perform a given
   # action is not available. Typically, you will need to
   # install another gem or some library/software.

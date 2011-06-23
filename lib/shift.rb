@@ -1,10 +1,11 @@
 
 
 #  SHIFT
-#
 #  Compiler and compressor interface framework
-#
 #  (c) 2011 Jostein Berre Eliassen - MIT licence
+
+
+require 'lazy_load'
 
 
 module Shift
@@ -12,19 +13,25 @@ module Shift
   VERSION = '0.4.0'
 
   require 'shift/errors'
-  require 'shift/mapper'
-  require 'shift/interfaces'
-  require 'shift/mappings'
-
-  autoload :String,   'shift/string'
+  require 'shift/data'
+  
 
 
   class << self
+
+    def [](path)
+      path = '.' + path.to_s if path.is_a?(Symbol)
+      path = File.basename(path.to_s).downcase
+
+      until path.empty?
+        return Data.const_get(Data::MAP[path]) if Data::MAP[path]
+        path.sub!(/^[^.]*\.?/, '')
+      end
+      Data::BasicFile
+    end
   
-    # (see Shift::String.new)
-    #
-    def new(*args)
-      Shift::String.new(*args)
+    def new(data='', path=nil)
+      self[path].new(data, path)
     end
 
     # Read a file, returning a Shift string.
@@ -34,8 +41,8 @@ module Shift
     #
     # (see Shift.new)
     #
-    def read(path, new_path=nil)
-      new(File.read(path), new_path || path)
+    def read(path, alt_path=nil)
+      new(File.read(path), alt_path || path)
     end
 
     # Read and concatenate several files.
@@ -43,14 +50,8 @@ module Shift
     #
     # TODO: glob
     #
-    def concat(*globs)
-      buf = new('', File.extname(globs.first))
-      globs.each do |glob|
-        Dir[glob].each do |file|
-          buf.read_append(file)
-        end
-      end
-      buf
+    def concat(*args)
+      self[args.first].concat(*args)
     end
     alias :cat :concat
 

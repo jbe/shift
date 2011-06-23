@@ -14,8 +14,9 @@ class TestCase < MiniTest::Unit::TestCase
     file = Tempfile.new("shift_test#{fmt}")
     file.write(data) if data
     file.close
-    yield(file.path)
+    r = yield(file.path)
     file.unlink
+    r
   end
 
 end
