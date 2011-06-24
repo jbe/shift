@@ -4,6 +4,7 @@ require 'shift'
 task :test do
   require 'minitest/autorun'
   # begin; require 'turn'; rescue LoadError; end
+  # begin; require 'minitest/pride'; rescue LoadError; end
   Dir.glob("test/**/*_test.rb").each { |test| require "./#{test}" }
 end
 

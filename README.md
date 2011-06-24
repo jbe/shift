@@ -4,6 +4,8 @@ Shift
 
 **Compiler and compressor interface**
 
+*On the drawing board. Passes tests on 1.9. Documentation currently out of date*
+
 ---
 
 Shift is a generic Ruby interface to different compilers, compressors, transformers and so on. It is also an easy way to chain actions that transform something and build compiler chains.
