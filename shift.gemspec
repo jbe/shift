@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.platform  = Gem::Platform::RUBY
 
   s.summary       = 'Compiler and transformer interface framework'
-  s.description   = 'Shift is a generic interface to different compilers, compressors, and so on. You can use it to build chains, like Shift.read("cup.coffee").compile.minify.write'
+  s.description   = 'Shift is a generic interface to different compilers, compressors, and so on. You can use it to build chains, like Shift.read("cup.coffee").compile.minify.move("./public/js/").write'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- spec/*`.split("\n")
@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.bindir        = 'bin'
   s.executables   = ['shifter']
 
-  s.add_dependency 'lazy_load', '>= 0.0.3'
+  s.add_dependency 'lazy_load', '>= 0.1.0'
 end
