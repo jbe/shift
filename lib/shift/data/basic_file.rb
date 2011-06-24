@@ -51,20 +51,20 @@ module Shift
       attr_accessor :path
 
       def data
-        @data[String] || @data[IO]
+        @data[:string] || @data[:io]
       end
 
       def data_io
-        @data[IO] ||= StringIO.new(@data[String])
+        @data[:io] ||= StringIO.new(@data[:string])
       end
 
       def data_string
-        @data[String] ||= begin
-          d = @data[IO].read
+        @data[:string] ||= begin
+          d = @data[:io].read
           begin
-            @data[IO].rewind if @data[IO].respond_to?(:rewind)
+            @data[:io].rewind if @data[:io].respond_to?(:rewind)
           rescue
-            @data[IO] = nil
+            @data[:io] = nil
           end
           d
         end
@@ -74,7 +74,7 @@ module Shift
       # append a string
       def <<(data)
         data_string << data
-        @data[IO] = nil
+        @data[:io] = nil
         self
       end
       alias :append :<<
@@ -98,6 +98,14 @@ module Shift
         self.class.new(data, @path.dup)
       end
 
+      def dir;      File.dirname(@path  || path_error); end
+      def basename; File.basename(@path || path_error); end
+      def extname;  File.extname(@path  || path_error); end
+      def full_ext
+        idx = basename.index('.')
+        idx ? basename[idx..-1] : ''
+      end
+
       # Modify data given a filter block. Optionally also change
       # file path, given options like:
       #
@@ -113,25 +121,20 @@ module Shift
       end
       alias :tranform :process
 
-      def dir;      File.dirname(@path  || path_error); end
-      def basename; File.basename(@path || path_error); end
-      def extname;  File.extname(@path  || path_error); end
-      def full_ext
-        idx = basename.index('.')
-        idx ? basename[idx..-1] : ''
+      def rename(new_name, opts={})
+        opts[:rename] = new_name
+        process(opts)
       end
 
-      def rename!(new_name, keep_ext=false)
-        self
+      def move(new_dir, opts={})
+        opts[:move] = new_dir
+        process(opts)
       end
-
-      def move(*args);            copy.move!(*args); end
-      def rename(*args);          copy.rename!(*args); end
 
       # actions
       #
       Lazy = LazyLoad.scope do
-        map :Zlib, 'zlib'
+        const :Zlib, 'zlib'
       end
 
       # gzips the file through a pipe using Zlib from stdlib
@@ -148,9 +151,10 @@ module Shift
 
       def data=(data)
         @data.clear
-        case data
-        when String then @data[String] = data.dup
-        when IO     then @data[IO] = data
+        if data.is_a?(String)
+          @data[:string] = data.dup
+        elsif data.respond_to?(:read)
+          @data[:io] = data
         else raise Shift::DataError, "unfamiliar #{data.inspect}"
         end
       end
